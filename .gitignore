@@ -1,0 +1,14 @@
+.idea/
+node_modules/
+dist/
+*.iml
+webpack-assets.json
+webpack-stats.json
+npm-debug.log
+*.database
+*.swp
+*.sql
+settings.js
+pgdata
+tmp/
+*.db

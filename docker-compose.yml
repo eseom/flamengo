@@ -1,0 +1,16 @@
+db:
+    container_name: flamengo_db
+    image: postgres:9.4.10
+    ports:
+        - 5432:5432
+    volumes: 
+        - ./pgdata:/var/lib/postgresql/data
+
+redis:
+    container_name: flamengo_redis
+    image: redis:3.0
+    command: redis-server /usr/local/etc/redis/redis.conf
+    ports:
+        - 6379:6379
+    volumes:
+        - ./docker/redis.conf:/usr/local/etc/redis/redis.conf
