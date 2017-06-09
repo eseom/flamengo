@@ -34,6 +34,7 @@ nestedRoute.post('/query', {
       query: Joi.string().required(),
     },
   },
+  auth: 'connectionRequired',
 }, (request, reply) => {
   const dbname = request.yar.get('database')
   if (request.yar.get('dsn')) {
@@ -91,9 +92,9 @@ ORDER BY 1;`
     finalQuery = query
   }
   databases[dbname].query(finalQuery).spread((result) => {
-    setTimeout(() => {
-      reply({ result })
-    }, 2000)
+    // setTimeout(() => {
+    reply({ result })
+    // }, 1000)
   }).catch((e) => {
     reply(Boom.badRequest(e.message))
   })

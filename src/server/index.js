@@ -1,3 +1,4 @@
+import Boom from 'boom'
 import { server as hailsServer, logger } from 'hails'
 import Vue from 'vue'
 import settingsFile from '../../settings'
@@ -14,6 +15,12 @@ const internals = {
     return {
       authenticate(request, reply) {
         const database = request.yar.get('database')
+        if (!database) {
+          reply(Boom.unauthorized('no connection'), null, {})
+          return
+        }
+
+        console.log(database)
 
         // update session ttl
         request.yar.set('database', database)

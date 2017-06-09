@@ -8,5 +8,7 @@ export const QUERY = {
   SET_CONN: 'query/SET_CONN',
   ADD_QUERY: 'query/ADD_QUERY',
   ADD_QUERY_RESULT: 'query/ADD_QUERY_RESULT',
+  EDIT_QUERY: 'query/EDIT_QUERY',
+  EDIT_QUERY_RESULT: 'query/EDIT_QUERY_RESULT',
   DEL_QUERY: 'query/DEL_QUERY',
 }
