@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import Toasted from 'vue-toasted'
 import VueSuperagent from 'vue-superagent'
-import VueClip from 'vue-clip'
 import router from 'router'
 import App from 'containers/App/App.vue'
 import VueNes from 'vue-nes'
@@ -16,7 +15,6 @@ import store from './store'
 //   .install()
 
 Vue.use(VueSuperagent)
-Vue.use(VueClip)
 Vue.use(Toasted, {
   duration: 10000,
   position: 'custom-top-right',

@@ -20,8 +20,6 @@ const internals = {
           return
         }
 
-        console.log(database)
-
         // update session ttl
         request.yar.set('database', database)
         request.database = database
