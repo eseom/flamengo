@@ -314,6 +314,6 @@ tr.result-header {
   background-color: transparent;
   border-bottom: 3px solid #cdcdcd;
   width: 50%;
-  display: block;
+  display: block !important;
 }
 </style>
