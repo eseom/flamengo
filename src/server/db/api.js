@@ -125,7 +125,6 @@ nestedRoute.post('/connect', {
     reply(Boom.unauthorized('connection refused.'))
     return
   }
-  console.log(11)
 
   request.yar.set('database', key)
   request.yar.set('dsn', dsn)

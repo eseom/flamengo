@@ -8,16 +8,15 @@ module.exports = {
       'user',
       'db',
     ],
-    hostname: 'http://localhost:3000',
     broker: {
-      url: 'redis://:dev@localhost:6379/9',
+      url: process.env.REDIS,
     },
     redis: {
-      url: 'redis://:dev@localhost:6379/9',
+      url: process.env.REDIS,
     },
     schedules: [
-      ['1 * * * *', 'db.test'],
     ],
+    useSequelize: false,
     database: {
       storage: 'flamengo.db',
       dialect: 'sqlite',

@@ -1,0 +1,12 @@
+#!/usr/bin/env node
+
+require('../tools/babel-require')
+
+global.CLIENT = false
+global.SERVER = true
+global.DISABLE_SSR = false
+global.DEVELOPMENT = true
+
+global.assets = require('../webpack-assets.json')
+
+require('../dist/server')
