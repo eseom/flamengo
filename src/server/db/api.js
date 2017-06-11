@@ -3,6 +3,7 @@ import Boom from 'boom'
 import { server, logger } from 'hails'
 import Sequelize from 'sequelize'
 import databases from './databases'
+import * as query from './query'
 
 const nestedRoute = server.route.nested('/api/db')
 
@@ -41,55 +42,22 @@ nestedRoute.post('/query', {
     connect(dbname, request.yar.get('dsn'))
   }
 
-  const { query } = request.payload
+  const queryString = request.payload.query
   let finalQuery = ''
 
   // query
-  if (query.substring(0, 1) === '\\') {
-    switch (query.substring(1)) {
-      case 'd':
-        finalQuery = `SELECT n.nspname as "Schema",
-  c.relname as "Name",
-  CASE c.relkind WHEN 'r' THEN 'table' WHEN 'v' THEN 'view' WHEN 'm' THEN 'materialized view' WHEN 'i' THEN 'index' WHEN 'S' THEN 'sequence' WHEN 's' THEN 'special' WHEN 'f' THEN 'foreign table' END as "Type",
-  pg_catalog.pg_get_userbyid(c.relowner) as "Owner"
-FROM pg_catalog.pg_class c
-     LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
-WHERE c.relkind IN ('r','v','m','S','f','')
-      AND n.nspname <> 'pg_catalog'
-      AND n.nspname <> 'information_schema'
-      AND n.nspname !~ '^pg_toast'
-  AND pg_catalog.pg_table_is_visible(c.oid)
-ORDER BY 1,2;`
-        break
-      case 'dt':
-        finalQuery = `SELECT n.nspname as "Schema",
-  c.relname as "Name",
-  CASE c.relkind WHEN 'r' THEN 'table' WHEN 'v' THEN 'view' WHEN 'm' THEN 'materialized view' WHEN 'i' THEN 'index' WHEN 'S' THEN 'sequence' WHEN 's' THEN 'special' WHEN 'f' THEN 'foreign table' END as "Type",
-  pg_catalog.pg_get_userbyid(c.relowner) as "Owner"
-FROM pg_catalog.pg_class c
-     LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
-WHERE c.relkind IN ('r','')
-      AND n.nspname <> 'pg_catalog'
-      AND n.nspname <> 'information_schema'
-      AND n.nspname !~ '^pg_toast'
-  AND pg_catalog.pg_table_is_visible(c.oid)
-ORDER BY 1,2;`
-        break
-      case 'l':
-        finalQuery = `SELECT d.datname as "Name",
-       pg_catalog.pg_get_userbyid(d.datdba) as "Owner",
-       pg_catalog.pg_encoding_to_char(d.encoding) as "Encoding",
-       d.datcollate as "Collate",
-       d.datctype as "Ctype",
-       pg_catalog.array_to_string(d.datacl, E'\n') AS "Access privileges"
-FROM pg_catalog.pg_database d
-ORDER BY 1;`
-        break
-      default:
-        break
+  if (queryString.substring(0, 1) === '\\') {
+    try {
+      finalQuery = query.getSlashCommandQuery(queryString)
+    } catch (e) {
+      if (e instanceof query.NotImplementException) {
+        reply(Boom.badGateway('not implemented. suggest new features at https://github.com/eseom/flamengo/issues'))
+        return
+      }
+      throw e
     }
   } else {
-    finalQuery = query
+    finalQuery = queryString
   }
   databases[dbname].query(finalQuery).spread((result) => {
     // setTimeout(() => {
