@@ -81,6 +81,8 @@
                 <tbody>
                   <tr v-for="l in result.data">
                     <td style="white-space: nowrap;" v-for="c in l">
+                      <div v-if="c === ''">&nbsp;</div>
+                      <div v-if="c === null" class="badge badge-default nullvalue"></div>
                       <span v-if="c === true" class="badge badge-success">{{c}}</span>
                       <span v-else-if="c === false" class="badge badge-danger">{{c}}</span>
                       <span v-else> {{c}} </span>
@@ -306,5 +308,12 @@ tr.result-header {
       border-radius: 4px;
     }
   }
+}
+.nullvalue {
+  margin-top: 3px;
+  background-color: transparent;
+  border-bottom: 3px solid #cdcdcd;
+  width: 50%;
+  display: block;
 }
 </style>
