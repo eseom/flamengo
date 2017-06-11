@@ -60,9 +60,9 @@ nestedRoute.post('/query', {
     finalQuery = queryString
   }
   databases[dbname].query(finalQuery).spread((result) => {
-    // setTimeout(() => {
+    if (!result) result = []
+    else if (!Array.isArray(result)) result = [result]
     reply({ result })
-    // }, 1000)
   }).catch((e) => {
     reply(Boom.badRequest(e.message))
   })
