@@ -305,7 +305,7 @@ tr.result-header {
   &.active {
     &>div {
       border: 1px solid #adadad;
-      border-radius: 4px;
+      border-radius: 0px;
     }
   }
 }
