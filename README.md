@@ -1,7 +1,7 @@
 # overview
 ### :dancer: "*I just wanna QUERY*"
 
-If you like `psql` and `terminal`, you should type same queries again and again, If you like `web` also, you could execute queries, explorer results conviniently with **Flamengo**.
+If you like `psql` and `terminal`, you should type same queries again and again, If you like `web` also, you could execute queries, explorer results conveniently with **Flamengo**.
 
 [![npm version][npm-badge]][npm-url]
 
