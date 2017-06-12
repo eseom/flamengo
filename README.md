@@ -16,7 +16,7 @@ If you like `psql` and `terminal`, you should type same queries again and again,
 # usage
 ```
 npm install -g flamengo
-REDIS=redis://:dev@localhost:16379/9 PORT=8080 flamengo
+REDIS=redis://:dev@localhost:16379/9 [HOST=127.0.0.1 PORT=8080] flamengo
 ```
 
 # shortcuts
