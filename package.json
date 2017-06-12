@@ -1,6 +1,6 @@
 {
   "name": "flamengo",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "main": "index.js",
   "license": "MIT",
   "bin": {
@@ -47,7 +47,7 @@
     "bcrypt-nodejs": "^0.0.3",
     "catbox-redis": "^2.0.2",
     "cheerio": "^0.22.0",
-    "hails": "^0.1.15",
+    "hails": "^0.1.16",
     "hapi-nested-route": "^0.1.5",
     "highcharts": "^5.0.11",
     "inert": "^4.1.0",

@@ -1,6 +1,10 @@
 module.exports = {
   development: {
     version: '0.1',
+    connection: {
+      host: process.env.HOST || '0.0.0.0',
+      port: process.env.PORT || 3000,
+    },
     port: process.env.PORT,
     socketPort: process.env.SOCKET_PORT,
     modules: [
