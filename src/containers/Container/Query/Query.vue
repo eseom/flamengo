@@ -124,11 +124,9 @@ import { QUERY } from 'store/types'
 import _ from 'lodash'
 
 const { DEL_QUERY, EDIT_QUERY, ADD_QUERY } = QUERY
-const shortcuts = ['i', 'h', 'j', 'k', 'l', 'left', 'up', 'down', 'right', 'command+v', 'ctrl+v', 'enter']
+const shortcuts = ['i', 'h', 'j', 'k', 'l', 'left', 'right', 'command+v', 'ctrl+v', 'enter']
 const shortcutsMap = {
   left: 'h',
-  up: 'k',
-  down: 'j',
   right: 'l',
   'ctrl+v': 'command+v',
 }
@@ -136,7 +134,6 @@ const shortcutsMap = {
 export default {
   name: 'query',
   async beforeRouteEnter(to, from, next) {
-    // await store.dispatch(GET_SELECTED)
     next()
   },
   components: {
@@ -226,7 +223,7 @@ export default {
           return false
         },
         h() {
-          console.log('left')
+          // console.log('left')
         },
         j: () => {
           if (this.resultSet.length === 0) return
@@ -241,7 +238,7 @@ export default {
           this.scroll(this.traversal)
         },
         l() {
-          console.log('right')
+          // console.log('right')
         },
         enter: () => {
           if (this.traversal === -1) return

@@ -21,8 +21,8 @@ REDIS=redis://:dev@localhost:16379/9 PORT=8080 flamengo
 
 # shortcuts
 - i: focus query input
-- j or down: previous query result
-- k or up: next query result
+- j: previous query result
+- k: next query result
 - enter: make editable current query result
 - esc: cancel current editable or blur from query input
 - ctrl+v or cmd+v: focus input field if not focused, paste clipboard
