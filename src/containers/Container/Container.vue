@@ -1,8 +1,8 @@
 <template>
   <div>
-    <div style="position: fixed; top: 0; padding-top: 8px; width: 50px; height: 100%; background-color: #2c2c2c">
-      <i class="fa fa-home" style="color: #ababab; font-size: 25px; margin-left: 13px; margin-top: 15px"></i>
-      <a href @click.prevent="disconnect" style="position: absolute; color: red; font-size: 25px; left: 15px; bottom: 20px;">
+    <div class="left-bar">
+      <i class="fa fa-home button-home"></i>
+      <a href @click.prevent="disconnect" class="button-disconnect">
         <i class="fa fa-power-off"></i>
       </a>
     </div>
@@ -32,3 +32,29 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.left-bar {
+  position: fixed;
+  top: 0;
+  padding-top: 8px;
+  width: 55px;
+  height: 100%;
+  background-color: #2c2c2c;
+}
+
+.button-home {
+  color: #ababab;
+  font-size: 25px;
+  margin-left: 16px;
+  margin-top: 15px;
+}
+
+.button-disconnect {
+  position: absolute;
+  color: red;
+  font-size: 25px;
+  left: 17px;
+  bottom: 20px;
+}
+</style>

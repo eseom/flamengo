@@ -5,6 +5,13 @@
       <h2 class="text-light" style="margin-bottom: 20px;">Connect</h2>
   
       <form method="POST" name="login_user_form" v-on:submit.prevent="onSubmit">
+        <div class="alert alert-info" v-if="!error || dirty">
+          Input database connection information
+        </div>
+        <div class="alert alert-danger" v-else>
+          {{error}}
+        </div>
+  
         <div class="form-group">
           <p>
             <input class="form-control" id="host" v-model="host" name="host" placeholder="Host" @keyup="setDirty">
@@ -31,18 +38,8 @@
           </p>
         </div>
   
-        <div class="alert alert-info" v-if="!error || dirty">
-          Input database connection information
-        </div>
-        <div class="alert alert-danger" v-else>
-          {{error}}
-        </div>
-  
         <div class="form-group">
           <input class="btn btn-primary" id="submit" name="submit" type="submit" value="Connect">
-          <div style="margin-top: 10px">
-            <a :href="loginURL">AWESOME PLACE</a>
-          </div>
         </div>
       </form>
     </div>

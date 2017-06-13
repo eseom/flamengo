@@ -8,10 +8,10 @@ body, h1, h2, h3, h4, h5, h6 {
 }
 
 .main .container-fluid {
-    padding: 0 15px;
+  padding: 0 15px;
 }
 .breadcrumb {
-    margin-bottom: 1.0rem;
+  margin-bottom: 1.0rem;
 }
 
 .row {
@@ -24,15 +24,19 @@ body, h1, h2, h3, h4, h5, h6 {
 }
 
 .table th, .table td {
-    padding: 0.45rem;
+  padding: 0.45rem;
 }
 
 .table td label.switch {
-    margin-bottom: 0;
-    margin-top: 2px;
+  margin-bottom: 0;
+  margin-top: 2px;
 }
 
 .custom-top-right {
-    top: 20px;
-    right: 20px;
+  top: 20px;
+  right: 20px;
+}
+
+table.table td {
+  padding: 0.2rem 0.45rem;
 }
