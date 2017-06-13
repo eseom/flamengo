@@ -82,9 +82,10 @@
                   <tr v-for="l in result.data">
                     <td style="white-space: nowrap;" v-for="c in l">
                       <div v-if="c === ''">&nbsp;</div>
-                      <div v-if="c === null" class="badge badge-default nullvalue"></div>
-                      <span v-if="c === true" class="badge badge-success">{{c}}</span>
+                      <div v-else-if="c === null" class="badge badge-default nullvalue"></div>
+                      <span v-else-if="c === true" class="badge badge-success">{{c}}</span>
                       <span v-else-if="c === false" class="badge badge-danger">{{c}}</span>
+                      <span v-else-if="c.substring && c.substring(0, 2) === '\x20\x10'" class="datetime">{{new Date(c.substring(2)).toLocaleString()}}</span>
                       <span v-else> {{c}} </span>
                     </td>
                   </tr>
@@ -306,11 +307,17 @@ tr.result-header {
     }
   }
 }
+
 .nullvalue {
   margin-top: 3px;
   background-color: transparent;
   border-bottom: 3px solid #cdcdcd;
   width: 50%;
   display: block !important;
+}
+
+.datetime {
+  opacity: .8;
+  background-color: #d0dee5;
 }
 </style>

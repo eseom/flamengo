@@ -59,10 +59,20 @@ nestedRoute.post('/query', {
   } else {
     finalQuery = queryString
   }
-  databases[dbname].query(finalQuery).spread((result) => {
-    if (!result) result = []
-    else if (!Array.isArray(result)) result = [result]
-    reply({ result })
+  databases[dbname].query(finalQuery).spread((results) => {
+    // adjust date type
+    results = results.map((result) => {
+      Object.keys(result).forEach((k) => {
+        if (result[k] instanceof Date) {
+          result[k] = `\x20\x10${result[k].toISOString()}`
+        }
+      })
+      return result
+    })
+
+    if (!results) results = []
+    else if (!Array.isArray(results)) results = [results]
+    reply({ results })
   }).catch((e) => {
     reply(Boom.badRequest(e.message))
   })

@@ -97,7 +97,7 @@ export default {
       const uniqKey = new Date().getTime()
       commit(ADD_QUERY, { query, uniqKey })
       try {
-        const result = await agt.post('/api/db/query', { query }).then(response => response.body.result)
+        const result = await agt.post('/api/db/query', { query }).then(response => response.body.results)
         commit(ADD_QUERY_RESULT, { query, result, error: null, uniqKey })
       } catch (error) {
         commit(ADD_QUERY_RESULT, { query, result: [], error: error.response.body.message, uniqKey })
@@ -106,7 +106,7 @@ export default {
     async [EDIT_QUERY]({ commit }, { oldResult }) {
       commit(EDIT_QUERY, { result: oldResult })
       try {
-        const rows = await agt.post('/api/db/query', { query: oldResult.newQuery }).then(response => response.body.result)
+        const rows = await agt.post('/api/db/query', { query: oldResult.newQuery }).then(response => response.body.results)
         commit(EDIT_QUERY_RESULT, {
           query: oldResult.newQuery,
           rows,
