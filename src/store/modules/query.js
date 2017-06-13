@@ -85,14 +85,15 @@ export default {
       state.resultSet.splice(index, 1, obj)
     },
     [DEL_QUERY](state, { result }) {
-      state.resultSet.splice(state.resultSet.indexOf(result), 1)
+      const index = _.findIndex(state.resultSet, { uniqKey: result.uniqKey })
+      state.resultSet.splice(index, 1)
     },
     [SET_CONN](state, connection) {
       state.loadedConnection = connection
     },
   },
   actions: {
-    async[ADD_QUERY]({ commit }, query) {
+    async [ADD_QUERY]({ commit }, query) {
       const uniqKey = new Date().getTime()
       commit(ADD_QUERY, { query, uniqKey })
       try {
@@ -102,7 +103,7 @@ export default {
         commit(ADD_QUERY_RESULT, { query, result: [], error: error.response.body.message, uniqKey })
       }
     },
-    async[EDIT_QUERY]({ commit }, { oldResult }) {
+    async [EDIT_QUERY]({ commit }, { oldResult }) {
       commit(EDIT_QUERY, { result: oldResult })
       try {
         const rows = await agt.post('/api/db/query', { query: oldResult.newQuery }).then(response => response.body.result)
