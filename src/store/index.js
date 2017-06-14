@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import createPersistedState from 'vuex-persistedstate'
 import { vuexModule as socketVuexModule } from 'vue-nes'
 
 import actions from './actions'
@@ -21,6 +22,7 @@ const store = new Vuex.Store({
     nes: socketVuexModule,
   },
   strict: process.env.NODE_ENV !== 'production',
+  plugins: [createPersistedState()],
 })
 
 if (module.hot) {

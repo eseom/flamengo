@@ -4,6 +4,7 @@ import _ from 'lodash'
 import { QUERY } from '../types'
 
 const {
+  EPT_ALL_QUERIES,
   SET_CONN, DEL_QUERY, EDIT_QUERY, EDIT_QUERY_RESULT,
   ADD_QUERY, ADD_QUERY_RESULT,
 } = QUERY
@@ -86,6 +87,9 @@ export default {
     [DEL_QUERY](state, { result }) {
       const index = _.findIndex(state.resultSet, { uniqKey: result.uniqKey })
       state.resultSet.splice(index, 1)
+    },
+    [EPT_ALL_QUERIES](state) {
+      state.resultSet = []
     },
     [SET_CONN](state, connection) {
       state.loadedConnection = connection

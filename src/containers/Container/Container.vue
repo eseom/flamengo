@@ -13,12 +13,17 @@
 </template>
 
 <script>
+import { QUERY } from 'store/types'
+
+const { EPT_ALL_QUERIES } = QUERY
+
 export default {
   name: 'container',
   methods: {
     disconnect() {
       this.$http.post('/api/db/disconnect')
         .then(response => this.$router.replace({ name: 'login' }))
+      this.$store.commit(EPT_ALL_QUERIES)
     },
   },
   computed: {

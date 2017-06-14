@@ -49,11 +49,7 @@
 <script>
 export default {
   name: '',
-  beforeCreated() {
-    console.log('beforeCreated login')
-  },
   async created() {
-    this.loginURL = await this.$http.get('/api/user/login-uri').then(response => response.body.url)
   },
   nes: {
     subscribe: [

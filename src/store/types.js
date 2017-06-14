@@ -11,4 +11,5 @@ export const QUERY = {
   EDIT_QUERY: 'query/EDIT_QUERY',
   EDIT_QUERY_RESULT: 'query/EDIT_QUERY_RESULT',
   DEL_QUERY: 'query/DEL_QUERY',
+  EPT_ALL_QUERIES: 'query/EPT_ALL_QUERIES',
 }
