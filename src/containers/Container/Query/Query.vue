@@ -12,6 +12,9 @@
   
     <div class="container-fluid" @keyup.space="shortcut()">
   
+      <div class="pull-right">
+      <a href="https://www.npmjs.com/package/flamengo">Flamengo {{ version }}</a>
+      </div>
       <!-- db selector -->
       <div>
         <h4>
@@ -112,15 +115,6 @@
           </div>
         </div>
       </div>
-  
-      <form v-on:submit.prevent="onQuery" style="margin-top: 20px;">
-        <h4>
-          Query
-        </h4>
-        <div style="margin-top: 10px;">
-          <input @keyup.esc="esc" id="query" autocomplete="off" type="text" placeholder="input a query" class="monospace form-control input-block" v-model="query">
-        </div>
-      </form>
   
     </div>
   </section>
@@ -255,12 +249,6 @@ export default {
       if (this.shortcutHandlers[keyString]) return this.shortcutHandlers[keyString]()
       return false
     },
-    onQuery() {
-      const query = this.query.trim()
-      if (query === '') return
-      this.$store.dispatch(ADD_QUERY, query)
-      this.__blurAll()
-    },
     del(result) {
       this.$store.commit(DEL_QUERY, { result })
       this.traversal -= 1
@@ -279,6 +267,7 @@ export default {
       traversal: -1,
       DEVELOPMENT,
       queryModal: false,
+      version: require('../../../../package.json').version,
       shortcutHandlers: {
         i: () => {
           this.queryModal = true
