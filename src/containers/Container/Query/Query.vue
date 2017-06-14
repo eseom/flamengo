@@ -1,9 +1,11 @@
 <template>
-  <section class="slideIn">
-    <div v-bind:class="queryModal ? 'query-show' : 'query-hide'" style="box-shadow: -0px -0px 5px #888888; ; border: 1px solid #adadad; position: fixed; bottom: 10px; width: 600px; height: 400px; background: #EFEFEF">
-      <h4 style="padding: 10px">
-        Query
-      </h4>
+  <section class="slideIn" style="margin-bottom: 420px">
+    <div v-bind:class="queryModal ? 'query-show' : 'query-hide'" class="editor-box">
+      <h6 style="padding: 10px">
+        <span v-if="editable">edit</span>
+        <span v-else>new</span>
+        query
+      </h6>
       <textarea @keyup.alt.backspace="alert(1)" id="code" cols="120" rows="50"></textarea>
       <div style="font-size: 13px">Key buffer:
         <span id="command-display" style=""></span>
@@ -13,7 +15,7 @@
     <div class="container-fluid" @keyup.space="shortcut()">
   
       <div class="pull-right">
-      <a href="https://www.npmjs.com/package/flamengo">Flamengo {{ version }}</a>
+        <a href="https://www.npmjs.com/package/flamengo">Flamengo {{ version }}</a>
       </div>
       <!-- db selector -->
       <div>
@@ -41,7 +43,7 @@
                   <i class="fa fa-times"></i>
                   delete
                 </button>
-                <button class="btn btn-outline-warning btn-tools" @click.prevent="refresh">
+                <button class="btn btn-outline-warning btn-tools" @click.prevent="refresh(result)">
                   <i class="fa fa-refresh"></i>
                   refresh
                 </button>
@@ -63,12 +65,6 @@
   
             <div class="clear"></div>
             <div style="margin-top: 17px; margin-bottom: 10px;">
-              <!--<div v-if="editable === result">
-                      <form v-on:submit.prevent="editQuery(result)">
-                        <input @keyup.esc="esc" autocomplete="off" type="text" class="monospace form-control input-block editable" v-model="result.newQuery">
-                      </form>
-                    </div>-->
-  
               <div @click="setEditable(result)" style="cursor: pointer; background: #f8f8f6; padding: 10px; color: purple; margin-left: 0px;">
                 <pre style="margin: 0">{{result.query}}</pre>
               </div>
@@ -133,11 +129,10 @@ import { QUERY } from 'store/types'
 import _ from 'lodash'
 
 const { DEL_QUERY, EDIT_QUERY, ADD_QUERY } = QUERY
-const shortcuts = ['i', 'h', 'j', 'k', 'l', 'left', 'right', 'command+v', 'ctrl+v', 'enter']
+const shortcuts = ['i', 'd', 'esc', 'r', 'h', 'j', 'k', 'l', 'left', 'right', 'enter']
 const shortcutsMap = {
   left: 'h',
   right: 'l',
-  'ctrl+v': 'command+v',
 }
 
 export default {
@@ -170,27 +165,17 @@ export default {
       })
       CodeMirror.commands.save = (editor) => {
         const query = editor.getValue().trim()
-        // const query = this.query.trim()
         if (query === '') return
-
         if (this.editable) {
-          this.editQuery(this.editable, query)
+          this.$store.dispatch(EDIT_QUERY, { uniqKey: this.editable.uniqKey, query })
         } else {
           this.$store.dispatch(ADD_QUERY, query)
         }
-        editor.setValue('')
-        this.editor.getInputField().blur()
-        this.queryModal = false
-        // this.__blurAll()
+        this.closeEditor()
       }
-      CodeMirror.Vim.defineMotion('quit', (cm, head, motionArgs) => {
-        this.editor.setValue('')
-        this.editor.getInputField().blur()
-        this.queryModal = false
-      })
+      CodeMirror.Vim.defineMotion('quit', this.closeEditor)
       CodeMirror.Vim.mapCommand('ZQ', 'motion', 'quit')
     }
-
   },
   destroyed() {
     Mousetrap.unbind(shortcuts, this.shortcut)
@@ -204,45 +189,35 @@ export default {
     },
   },
   computed: {
+    loadedConnection() {
+      return this.$store.state.query.loadedConnection
+    },
     resultSet() {
       this.query = ''
       return _.cloneDeep(this.$store.state.query.resultSet)
-    },
-    loadedConnection() {
-      return this.$store.state.query.loadedConnection
     },
     affected() {
       return this.$store.state.query.affected
     },
   },
   methods: {
+    closeEditor() {
+      this.editor.setValue('')
+      this.editor.getInputField().blur()
+      this.editable = null
+      this.queryModal = false
+    },
     scroll(index) {
+      if (index === -1) return
       this.$el.querySelector(`#section${index}`).scrollIntoView()
     },
-    __blurAll() {
-      this.$el.querySelector('#query').blur()
-      try {
-        this.$el.querySelectorAll('.section input')[this.traversal].blur()
-      } catch (e) { }
-    },
     setEditable(result) {
-      // result.newQuery = result.rawQuery
       this.queryModal = true
       this.editor.setValue(result.rawQuery)
       this.editor.focus()
       this.editable = result
-      // const index = _.findIndex(this.resultSet, result)
-      // this.$nextTick(() => {
-      //   this.$el.querySelectorAll('.section input')[index].focus()
-      // })
     },
     editQuery(result, query) {
-      this.editable = null
-      this.$store.dispatch(EDIT_QUERY, { uniqKey: result.uniqKey, query })
-    },
-    esc() {
-      this.__blurAll()
-      this.editable = null
     },
     shortcut(key, keyString) {
       keyString = shortcutsMap[keyString] || keyString
@@ -251,33 +226,57 @@ export default {
     },
     del(result) {
       this.$store.commit(DEL_QUERY, { result })
+      this.askToDelete = null
       this.traversal -= 1
+      this.scroll(this.traversal)
     },
-    refresh() {
-      console.log('refresh')
+    refresh(result) {
+      if (typeof result === 'undefined') return
+      this.$store.dispatch(EDIT_QUERY, result)
     },
   },
   data() {
     return {
-      editor: null,
-      lastQuery: '',
-      query: '',
-      askToDelete: null,
-      editable: null,
-      traversal: -1,
       DEVELOPMENT,
-      queryModal: false,
+      // version
       version: require('../../../../package.json').version,
+
+      // codemirror component
+      editor: null,
+
+      // current asked resultset
+      askToDelete: null,
+
+      // current editable resultset
+      editable: null,
+
+      // selected index
+      traversal: -1,
+
+      // show query editor
+      queryModal: false,
+
+      // shortcuts
       shortcutHandlers: {
         i: () => {
           this.queryModal = true
           this.editor.focus()
           return false
-          // document.getElementById('query').focus()
-          // return false
         },
-        h() {
-          // console.log('left')
+        r: () => {
+          this.refresh(this.resultSet[this.traversal])
+        },
+        d: () => {
+          if (this.askToDelete) {
+            this.del(this.askToDelete)
+          } else {
+            this.askToDelete = this.resultSet[this.traversal]
+          }
+        },
+        esc: () => {
+          if (this.askToDelete) this.askToDelete = null
+        },
+        h: () => {
         },
         j: () => {
           if (this.resultSet.length === 0) return
@@ -291,18 +290,13 @@ export default {
           else this.traversal -= 1
           this.scroll(this.traversal)
         },
-        l() {
-          // console.log('right')
+        l: () => {
         },
         enter: () => {
           if (this.traversal === -1) return
           this.scroll(this.traversal)
           this.setEditable(this.resultSet[this.traversal])
           return false
-        },
-        ['command+v']: () => {
-          this.shortcutHandlers['i']()
-          return true
         },
       }
     }
@@ -380,5 +374,16 @@ tr.result-header {
 .datetime {
   opacity: .8;
   background-color: #d0dee5;
+}
+
+.editor-box {
+  box-shadow: -0px -0px 5px #888888;
+  border: 1px solid #adadad;
+  position: fixed;
+  bottom: 10px;
+  width: 600px;
+  height: 400px;
+  background: #EFEFEF;
+  z-index: 10;
 }
 </style>

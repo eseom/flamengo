@@ -20,12 +20,13 @@ REDIS=redis://:dev@localhost:16379/9 [HOST=127.0.0.1 PORT=8080] flamengo
 ```
 
 # shortcuts
-- i: focus query input
+- i: open new query editor and focus
+- d: ask to delete 1 section
+ - continous d: delete 1 section (d d)
+ - continues esc: cancel to delete (d esc)
 - j: previous query result
 - k: next query result
-- enter: make editable current query result
-- esc: cancel current editable or blur from query input
-- ctrl+v or cmd+v: focus input field if not focused, paste clipboard
+- enter: make editable current section
 
 # screenshot
 ```

@@ -6,7 +6,7 @@
         <i class="fa fa-power-off"></i>
       </a>
     </div>
-    <div style="margin-top: 20px; margin-bottom: 20px; margin-left: 55px; margin-right: 10px;">
+    <div class="content">
       <router-view></router-view>
     </div>
   </div>
@@ -56,5 +56,12 @@ export default {
   font-size: 25px;
   left: 17px;
   bottom: 20px;
+}
+
+.content {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  margin-left: 55px;
+  margin-right: 0px;
 }
 </style>
