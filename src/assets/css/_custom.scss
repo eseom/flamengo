@@ -45,11 +45,8 @@ table.table td {
   height: 320px;
 }
 
-.CodeMirror pre {
-  font-size: 130%;
-}
-.CodeMirror-linenumber {
-  font-size: 130%;
+.CodeMirror pre, .CodeMirror-linenumber {
+  font-family: Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace;
 }
 
 .CodeMirror-dialog {

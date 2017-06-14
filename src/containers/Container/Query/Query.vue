@@ -6,7 +6,7 @@
         <span v-else>new</span>
         query
       </h6>
-      <textarea @keyup.alt.backspace="alert(1)" id="code" cols="120" rows="50"></textarea>
+      <textarea id="code" cols="120" rows="50"></textarea>
       <div style="font-size: 13px">Key buffer:
         <span id="command-display" style=""></span>
       </div>
@@ -145,7 +145,7 @@ export default {
   },
   created() {
     Mousetrap.bind(shortcuts, this.shortcut)
-    window.onload = () => {
+    this.$nextTick(() => {
       this.editor = CodeMirror.fromTextArea(document.getElementById('code'), {
         keyMap: 'vim',
         mode: 'sql',
@@ -175,7 +175,7 @@ export default {
       }
       CodeMirror.Vim.defineMotion('quit', this.closeEditor)
       CodeMirror.Vim.mapCommand('ZQ', 'motion', 'quit')
-    }
+    })
   },
   destroyed() {
     Mousetrap.unbind(shortcuts, this.shortcut)
@@ -356,11 +356,11 @@ tr.result-header {
 }
 
 .query-show {
-  right: 10px
+  right: 10px;
 }
 
 .query-hide {
-  right: -4000px
+  right: -4000px;
 }
 
 .nullvalue {
