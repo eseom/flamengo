@@ -1,5 +1,15 @@
 <template>
   <section class="slideIn">
+    <div v-bind:class="queryModal ? 'query-show' : 'query-hide'" style="box-shadow: -0px -0px 5px #888888; ; border: 1px solid #adadad; position: fixed; bottom: 10px; width: 600px; height: 400px; background: #EFEFEF">
+      <h4 style="padding: 10px">
+        Query
+      </h4>
+      <textarea @keyup.alt.backspace="alert(1)" id="code" cols="120" rows="50"></textarea>
+      <div style="font-size: 13px">Key buffer:
+        <span id="command-display" style=""></span>
+      </div>
+    </div>
+  
     <div class="container-fluid" @keyup.space="shortcut()">
   
       <!-- db selector -->
@@ -12,7 +22,7 @@
   
       <div style="margin-top: 20px;">
         <h4>
-          Queries
+          Queries and Results
           <span class="subheader">group #default</span>
         </h4>
   
@@ -50,13 +60,13 @@
   
             <div class="clear"></div>
             <div style="margin-top: 17px; margin-bottom: 10px;">
-              <div v-if="editable === result">
-                <form v-on:submit.prevent="editQuery(result)">
-                  <input @keyup.esc="esc" autocomplete="off" type="text" class="monospace form-control input-block editable" v-model="result.newQuery">
-                </form>
-              </div>
+              <!--<div v-if="editable === result">
+                      <form v-on:submit.prevent="editQuery(result)">
+                        <input @keyup.esc="esc" autocomplete="off" type="text" class="monospace form-control input-block editable" v-model="result.newQuery">
+                      </form>
+                    </div>-->
   
-              <div v-if="editable !== result" @click="setEditable(result)" style="cursor: pointer; background: #f8f8f6; padding: 10px; color: purple; margin-left: 0px;">
+              <div @click="setEditable(result)" style="cursor: pointer; background: #f8f8f6; padding: 10px; color: purple; margin-left: 0px;">
                 <pre style="margin: 0">{{result.query}}</pre>
               </div>
             </div>
@@ -117,9 +127,13 @@
 </template>
 
 <script>
+import CodeMirror from 'codemirror'
 import SyncLoader from 'vue-spinner/src/SyncLoader.vue'
 import Mousetrap from 'mousetrap'
 import store from 'store'
+import 'codemirror/mode/sql/sql'
+import 'codemirror/keymap/vim'
+import 'codemirror/lib/codemirror.css'
 
 import { QUERY } from 'store/types'
 import _ from 'lodash'
@@ -142,6 +156,47 @@ export default {
   },
   created() {
     Mousetrap.bind(shortcuts, this.shortcut)
+    window.onload = () => {
+      this.editor = CodeMirror.fromTextArea(document.getElementById('code'), {
+        keyMap: 'vim',
+        mode: 'sql',
+        lineNumbers: true,
+        matchBrackets: true,
+        textWrapping: false
+      })
+      const commandDisplay = document.getElementById('command-display')
+      let keys = ''
+      CodeMirror.on(this.editor, 'vim-keypress', (key) => {
+        keys = keys + key
+        commandDisplay.innerHTML = keys
+      })
+      CodeMirror.on(this.editor, 'vim-command-done', (e) => {
+        keys = ''
+        commandDisplay.innerHTML = keys
+      })
+      CodeMirror.commands.save = (editor) => {
+        const query = editor.getValue().trim()
+        // const query = this.query.trim()
+        if (query === '') return
+
+        if (this.editable) {
+          this.editQuery(this.editable, query)
+        } else {
+          this.$store.dispatch(ADD_QUERY, query)
+        }
+        editor.setValue('')
+        this.editor.getInputField().blur()
+        this.queryModal = false
+        // this.__blurAll()
+      }
+      CodeMirror.Vim.defineMotion('quit', (cm, head, motionArgs) => {
+        this.editor.setValue('')
+        this.editor.getInputField().blur()
+        this.queryModal = false
+      })
+      CodeMirror.Vim.mapCommand('ZQ', 'motion', 'quit')
+    }
+
   },
   destroyed() {
     Mousetrap.unbind(shortcuts, this.shortcut)
@@ -168,7 +223,7 @@ export default {
   },
   methods: {
     scroll(index) {
-      this.$el.querySelector(`#section${index}`).scrollIntoView();
+      this.$el.querySelector(`#section${index}`).scrollIntoView()
     },
     __blurAll() {
       this.$el.querySelector('#query').blur()
@@ -177,15 +232,19 @@ export default {
       } catch (e) { }
     },
     setEditable(result) {
-      result.newQuery = result.rawQuery;
+      // result.newQuery = result.rawQuery
+      this.queryModal = true
+      this.editor.setValue(result.rawQuery)
+      this.editor.focus()
       this.editable = result
-      const index = _.findIndex(this.resultSet, result)
-      this.$nextTick(() => {
-        this.$el.querySelectorAll('.section input')[index].focus()
-      })
+      // const index = _.findIndex(this.resultSet, result)
+      // this.$nextTick(() => {
+      //   this.$el.querySelectorAll('.section input')[index].focus()
+      // })
     },
-    editQuery(result) {
-      this.$store.dispatch(EDIT_QUERY, { oldResult: result })
+    editQuery(result, query) {
+      this.editable = null
+      this.$store.dispatch(EDIT_QUERY, { uniqKey: result.uniqKey, query })
     },
     esc() {
       this.__blurAll()
@@ -212,16 +271,21 @@ export default {
   },
   data() {
     return {
+      editor: null,
       lastQuery: '',
       query: '',
       askToDelete: null,
       editable: null,
       traversal: -1,
       DEVELOPMENT,
+      queryModal: false,
       shortcutHandlers: {
-        i() {
-          document.getElementById('query').focus()
+        i: () => {
+          this.queryModal = true
+          this.editor.focus()
           return false
+          // document.getElementById('query').focus()
+          // return false
         },
         h() {
           // console.log('left')
@@ -306,6 +370,14 @@ tr.result-header {
       border-radius: 0px;
     }
   }
+}
+
+.query-show {
+  right: 10px
+}
+
+.query-hide {
+  right: -4000px
 }
 
 .nullvalue {

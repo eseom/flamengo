@@ -50,10 +50,9 @@ export default {
       state.affected = index
       state.resultSet.splice(index, 1, obj)
     },
-    [EDIT_QUERY](state, { result }) {
-      const { uniqKey, newQuery } = result
-      let query = newQuery
-      if (query.substring(0, 1) !== '\\') query = sqlFormatter.format(query)
+    [EDIT_QUERY](state, { uniqKey, query }) {
+      let newQuery = query
+      if (query.substring(0, 1) !== '\\') newQuery = sqlFormatter.format(query)
       const index = _.findIndex(state.resultSet, { uniqKey })
       const obj = {
         uniqKey,
@@ -103,22 +102,22 @@ export default {
         commit(ADD_QUERY_RESULT, { query, result: [], error: error.response.body.message, uniqKey })
       }
     },
-    async [EDIT_QUERY]({ commit }, { oldResult }) {
-      commit(EDIT_QUERY, { result: oldResult })
+    async [EDIT_QUERY]({ commit }, { uniqKey, query }) {
+      commit(EDIT_QUERY, { uniqKey, query })
       try {
-        const rows = await agt.post('/api/db/query', { query: oldResult.newQuery }).then(response => response.body.results)
+        const rows = await agt.post('/api/db/query', { query }).then(response => response.body.results)
         commit(EDIT_QUERY_RESULT, {
-          query: oldResult.newQuery,
+          query,
           rows,
           error: null,
-          uniqKey: oldResult.uniqKey,
+          uniqKey,
         })
       } catch (error) {
         commit(EDIT_QUERY_RESULT, {
-          query: oldResult.newQuery,
+          query,
           rows: [],
           error: error.response.body.message,
-          uniqKey: oldResult.uniqKey,
+          uniqKey,
         })
       }
     },
