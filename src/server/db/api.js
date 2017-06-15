@@ -40,9 +40,11 @@ nestedRoute.post('/query', {
   },
   auth: 'connectionRequired',
 }, (request, reply) => {
-  const dbname = request.yar.get('database')
-  if (request.yar.get('dsn')) {
-    connect(dbname, request.yar.get('dsn'))
+  const database = request.yar.get('database')
+  const realDsn = request.yar.get('dsn')
+
+  if (!databases[database.dsn]) {
+    connect(database.dsn, realDsn)
   }
 
   const queryString = request.payload.query
@@ -62,7 +64,8 @@ nestedRoute.post('/query', {
   } else {
     finalQuery = queryString
   }
-  databases[dbname].query(finalQuery).spread((results) => {
+
+  databases[database.dsn].query(finalQuery).spread((results) => {
     // adjust date type
     results = results.map((result) => {
       Object.keys(result).forEach((k) => {
