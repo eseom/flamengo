@@ -1,6 +1,6 @@
 {
   "name": "flamengo",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "main": "index.js",
   "license": "MIT",
   "bin": {
@@ -88,6 +88,7 @@
     "uglify-js": "git://github.com/mishoo/UglifyJS2#harmony-v2.8.22",
     "uglifyjs-webpack-plugin": "^0.4.1",
     "url-loader": "^0.5.8",
+    "vue-codemirror": "^3.0.7",
     "vue-loader": "^12.1.0",
     "vue-nes": "^0.1.1",
     "vue-router": "^2.5.3",

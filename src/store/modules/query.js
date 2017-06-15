@@ -18,11 +18,11 @@ export default {
   },
   mutations: {
     [ADD_QUERY](state, { query, uniqKey }) {
-      const rawQuery = query
-      if (query.substring(0, 1) !== '\\') query = sqlFormatter.format(query)
+      // const rawQuery = query
+      // if (query.substring(0, 1) !== '\\') query = sqlFormatter.format(query)
       const obj = {
         uniqKey,
-        rawQuery,
+        // rawQuery,
         query,
         keys: [],
         data: [],
@@ -34,11 +34,11 @@ export default {
       state.resultSet.push(obj)
     },
     [ADD_QUERY_RESULT](state, { query, result, error, uniqKey }) {
-      const rawQuery = query
-      if (query.substring(0, 1) !== '\\') query = sqlFormatter.format(query)
+      // const rawQuery = query
+      // if (query.substring(0, 1) !== '\\') query = sqlFormatter.format(query)
       const obj = {
         uniqKey,
-        rawQuery,
+        // rawQuery,
         query,
         keys: result[0] ? Object.keys(result[0]) : [],
         data: result.map(r => Object.values(r)),
@@ -52,12 +52,12 @@ export default {
       state.resultSet.splice(index, 1, obj)
     },
     [EDIT_QUERY](state, { uniqKey, query }) {
-      let newQuery = query
-      if (query.substring(0, 1) !== '\\') newQuery = sqlFormatter.format(query)
+      // let newQuery = query
+      // if (query.substring(0, 1) !== '\\') newQuery = sqlFormatter.format(query)
       const index = _.findIndex(state.resultSet, { uniqKey })
       const obj = {
         uniqKey,
-        rawQuery: newQuery,
+        // rawQuery: newQuery,
         query,
         keys: [],
         data: [],
@@ -69,11 +69,11 @@ export default {
     },
     [EDIT_QUERY_RESULT](state, { query, rows, error, uniqKey }) {
       const index = _.findIndex(state.resultSet, { uniqKey })
-      const rawQuery = query
-      if (query.substring(0, 1) !== '\\') query = sqlFormatter.format(query)
+      // const rawQuery = query
+      // if (query.substring(0, 1) !== '\\') query = sqlFormatter.format(query)
       const obj = {
         uniqKey,
-        rawQuery,
+        // rawQuery,
         query,
         keys: rows[0] ? Object.keys(rows[0]) : [],
         data: rows.map(r => Object.values(r)),

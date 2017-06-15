@@ -7,9 +7,9 @@ import * as query from './query'
 
 const nestedRoute = server.route.nested('/api/db')
 
-const connect = async (key, dsn) => {
-  if (!databases[key]) {
-    databases[key] = new Sequelize(dsn, {
+const connect = async (dsn, realDsn) => {
+  if (!databases[dsn]) {
+    databases[dsn] = new Sequelize(realDsn, {
       logging: process.env.NODE_ENV !== 'production' ? logger.info : false,
       dialect: 'postgres',
       protocol: 'postgres',
@@ -19,10 +19,13 @@ const connect = async (key, dsn) => {
     })
   }
   try {
-    await databases[key].query('set statement_timeout = 0;')
+    const result = await databases[dsn].query('SELECT VERSION();')
+    return {
+      version: result[0][0].version,
+    }
   } catch (e) {
-    console.log(e)
-    delete databases[key]
+    logger.error(e)
+    delete databases[dsn]
     throw e
   }
 }
@@ -94,19 +97,21 @@ nestedRoute.post('/connect', {
   const dsnTemplate = `postgres://${request.payload.username}__REPLACE__@${request.payload.host}:${request.payload.port}/${request.payload.dbname}`
 
   // TODO already connected connection
-  const key = dsnTemplate.replace('__REPLACE__', '')
-  const dsn = dsnTemplate.replace('__REPLACE__', `:${request.payload.password}`)
+  const dsn = dsnTemplate.replace('__REPLACE__', '')
+  const realDsn = dsnTemplate.replace('__REPLACE__', `:${request.payload.password}`)
 
   try {
-    await connect(key, dsn)
+    const { version } = await connect(dsn, realDsn)
+    request.yar.set('database', {
+      dsn, // password removed dsn
+      version,
+    })
+    // not send to client
+    request.yar.set('dsn', realDsn)
+    reply({ host: request.payload.host })
   } catch (e) {
     reply(Boom.unauthorized('connection refused.'))
-    return
   }
-
-  request.yar.set('database', key)
-  request.yar.set('dsn', dsn)
-  reply({ host: request.payload.host })
 })
 
 nestedRoute.get('/load-connection', {
@@ -114,20 +119,25 @@ nestedRoute.get('/load-connection', {
   tags: ['api', 'db'],
 }, async (request, reply) => {
   const database = request.yar.get('database')
-  if (database) reply({ dsn: request.yar.get('database') })
-  else reply(Boom.unauthorized('not logged in'))
+  if (database) {
+    const session = request.yar.get('database')
+    reply({
+      dsn: session.dsn,
+      version: session.version,
+    })
+  } else reply(Boom.unauthorized('not logged in'))
 })
 
 nestedRoute.post('/disconnect', {
   description: 'disconnect',
   tags: ['api', 'db'],
 }, async (request, reply) => {
-  const key = request.yar.get('database')
+  const { dsn } = request.yar.get('database')
   request.yar.clear('database')
   request.yar.clear('dsn')
-  if (databases[key]) {
-    databases[key].close()
-    delete databases[key]
+  if (databases[dsn]) {
+    databases[dsn].close()
+    delete databases[dsn]
   }
   reply({ result: true })
 })

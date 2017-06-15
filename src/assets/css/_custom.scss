@@ -41,8 +41,13 @@ table.table td {
   padding: 0.2rem 0.45rem;
 }
 
+.editor {
+  .CodeMirror {
+    height: 320px;
+  }
+}
 .CodeMirror {
-  height: 320px;
+  height: initial;
 }
 
 .CodeMirror pre, .CodeMirror-linenumber {

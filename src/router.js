@@ -46,7 +46,7 @@ router.beforeEach(async (to, from, next) => {
   store.commit(SHOW_LOADING)
   let pass = false
   try {
-    const loadedConnection = await request.get('/api/db/load-connection').then(response => response.body.dsn)
+    const loadedConnection = await request.get('/api/db/load-connection').then(response => response.body)
     pass = true
     store.commit(SET_CONN, loadedConnection)
   } catch (e) { // eslint-disable-line empty-block

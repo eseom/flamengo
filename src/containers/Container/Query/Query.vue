@@ -4,16 +4,16 @@
       <h6 style="padding: 10px">
         <span v-if="editable">edit</span>
         <span v-else>new</span>
-        query
       </h6>
+      <!--<codemirror v-model="editorData" :options="{mode: 'text/x-pgsql', readOnly: true, lineNumbers: false}"></codemirror>-->
+      <div class="editor">
       <textarea id="code" cols="120" rows="50"></textarea>
+      </div>
       <div style="font-size: 13px">Key buffer:
         <span id="command-display" style=""></span>
       </div>
     </div>
-  
     <div class="container-fluid" @keyup.space="shortcut()">
-  
       <div class="pull-right">
         <a href="https://www.npmjs.com/package/flamengo">Flamengo {{ version }}</a>
       </div>
@@ -65,8 +65,10 @@
   
             <div class="clear"></div>
             <div style="margin-top: 17px; margin-bottom: 10px;">
-              <div @click="setEditable(result)" style="cursor: pointer; background: #f8f8f6; padding: 10px; color: purple; margin-left: 0px;">
-                <pre style="margin: 0">{{result.query}}</pre>
+              <div @click="setEditable(result)" style="cursor: pointer; background: #f8f8f6; padding: 1px; color: purple; margin-left: 0px;">
+                <codemirror v-model="result.query" :options="{mode: 'text/x-pgsql', readOnly: true, lineNumbers: false, height: '200px'}"></codemirror>
+                <!--<textarea :id="'query' + result.uniqKey">{{result.query}}</textarea>-->
+                <!--<pre style="margin: 0">{{result.query}}</pre>-->
               </div>
             </div>
             <input type="text" placeholder="description" class="form-control input-sm">
@@ -148,7 +150,7 @@ export default {
     this.$nextTick(() => {
       this.editor = CodeMirror.fromTextArea(document.getElementById('code'), {
         keyMap: 'vim',
-        mode: 'sql',
+        mode: 'text/x-pgsql',
         lineNumbers: true,
         matchBrackets: true,
         textWrapping: false
@@ -213,7 +215,7 @@ export default {
     },
     setEditable(result) {
       this.queryModal = true
-      this.editor.setValue(result.rawQuery)
+      this.editor.setValue(result.query)
       this.editor.focus()
       this.editable = result
     },
@@ -243,6 +245,9 @@ export default {
 
       // codemirror component
       editor: null,
+
+      // editor data
+      editorData: '',
 
       // current asked resultset
       askToDelete: null,

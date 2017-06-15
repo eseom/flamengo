@@ -3,6 +3,7 @@ import Toasted from 'vue-toasted'
 import VueSuperagent from 'vue-superagent'
 import router from 'router'
 import App from 'containers/App/App.vue'
+import VueCodeMirror from 'vue-codemirror'
 import VueNes from 'vue-nes'
 
 // import Raven from 'raven-js'
@@ -14,6 +15,7 @@ import store from './store'
 //   .addPlugin(RavenVue, Vue)
 //   .install()
 
+Vue.use(VueCodeMirror)
 Vue.use(VueSuperagent)
 Vue.use(Toasted, {
   duration: 10000,
